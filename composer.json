@@ -1,0 +1,24 @@
+{
+  "name": "aselsan/indonesian-date",
+  "description": "Indonesian standard datetime output",
+  "type": "library",
+  "require": {
+    "php": "^8.0"
+  },
+  "require-dev": {
+    "rector/rector": "dev-main"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Aselsan\\IndonesianDate\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "warcooft",
+      "email": "syamsuddine9@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev"
+}

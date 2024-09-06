@@ -14,16 +14,36 @@ declare(strict_types=1);
 namespace Aselsan\IndonesianDate\Traits;
 
 use CodeIgniter\I18n\Time;
+use Exception;
 
 trait IndonesianDateTraits
 {
     public function indonesianDate(string $attribute, bool $showDayOfWeek = true, bool $showTime = false): string
     {
         $datetime = $this->attributes[$attribute];
-        return $this->output($datetime, $showDayOfWeek, $showTime);
+
+        return static::output($datetime, $showDayOfWeek, $showTime);
     }
 
-    public function zodiac(string $attribute)
+    public function dayString(string $attribute): string
+    {
+        $datetime = $this->attributes[$attribute];
+        $parse    = Time::parse($datetime);
+        $dayWeek  = (int) $parse->getDayOfWeek();
+
+        return static::day($dayWeek);
+    }
+
+    public function monthString(string $attribute): string
+    {
+        $datetime = $this->attributes[$attribute];
+        $parse    = Time::parse($datetime);
+        $month    = (int) $parse->getMonth();
+
+        return static::month($month);
+    }
+
+    public function zodiac(string $attribute): string
     {
         $datetime = $this->attributes[$attribute];
         $parse    = Time::parse($datetime);
@@ -39,6 +59,35 @@ trait IndonesianDateTraits
         $parse    = Time::parse($datetime);
 
         return $parse->getAge();
+    }
+
+    // Indonesian standard datetime output
+    // E.g: Senin, 23 September 2024 18.00
+    private static function output($datetime, bool $showDayOfWeek = true, bool $showTime = false): string
+    {
+        $parse    = Time::parse($datetime);
+
+        $year        = $parse->getYear();
+        $month       = $parse->getMonth();
+        $dayWeek     = $parse->getDayOfWeek();
+        $day         = $parse->getDay();
+        $hour        = $parse->getHour();
+        $minute      = str_pad($parse->getMinute(), 2, '0', STR_PAD_LEFT);
+
+        $dayString   = static::day($dayWeek);
+        $monthString = static::month($month);
+
+        $output = "$dayString, $day $monthString $year";
+
+        if (!$showDayOfWeek && !$showTime) {
+            $output = "$day $monthString $year";
+        } elseif (!$showDayOfWeek && $showTime) {
+            $output = "$day $monthString $year $hour.$minute";
+        } elseif ($showDayOfWeek && $showTime) {
+            $output .= " $hour.$minute";
+        }
+
+        return $output;
     }
 
     private static function determineZodiac(int $day, int $month): string
@@ -80,36 +129,7 @@ trait IndonesianDateTraits
         return false;
     }
 
-    // Indonesian standard datetime output
-    // E.g: Senin, 23 September 2024 18.00
-    private function output($datetime, bool $showDayOfWeek = true, bool $showTime = false): string
-    {
-        $parse    = Time::parse($datetime);
-
-        $year        = $parse->getYear();
-        $month       = $parse->getMonth();
-        $dayWeek     = $parse->getDayOfWeek();
-        $day         = $parse->getDay();
-        $hour        = $parse->getHour();
-        $minute      = str_pad($parse->getMinute(), 2, '0', STR_PAD_LEFT);
-
-        $dayString   = static::day($dayWeek);
-        $monthString = static::month($month);
-
-        $output = "$dayString, $day $monthString $year";
-
-        if (!$showDayOfWeek && !$showTime) {
-            $output = "$day $monthString $year";
-        } elseif (!$showDayOfWeek && $showTime) {
-            $output = "$day $monthString $year $hour.$minute";
-        } elseif ($showDayOfWeek && $showTime) {
-            $output .= " $hour.$minute";
-        }
-
-        return $output;
-    }
-
-    private static function day($key): string|false
+    private static function day($key): string
     {
         $day = [
             1 => 'Minggu',
@@ -122,13 +142,13 @@ trait IndonesianDateTraits
         ];
 
         if (!array_key_exists($key, $day)) {
-            return false;
+            throw new Exception("Unknown key:" . $key);
         }
 
         return $day[$key];
     }
 
-    private static function month($key): string|false
+    private static function month($key): string
     {
         $month = [
             1 => 'Januari',
@@ -146,7 +166,7 @@ trait IndonesianDateTraits
         ];
 
         if (!array_key_exists($key, $month)) {
-            return false;
+            throw new Exception("Unknown key:" . $key);
         }
 
         return $month[$key];

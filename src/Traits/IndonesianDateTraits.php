@@ -11,7 +11,7 @@ declare(strict_types=1);
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace Aseslsan\IndonesianDate\Traits;
+namespace Aselsan\IndonesianDate\Traits;
 
 use CodeIgniter\I18n\Time;
 

@@ -32,9 +32,8 @@ class User extends ShieldUserEntity
    * indonesianDate(string $attribute, bool $showDayOfWeek = true, bool $showTime = false)
    */
 
-  // Default result: Friday, 6 September 2024
   echo auth()->user()->indonesianDate('updated_at');
-  // Result: "Friday, 6 September 2024"
+  // Result: "Jum'at, 6 September 2024"
 
   // If you want to hide the day of the week, set the second parameter to false
   echo auth()->user()->indonesianDate('updated_at', false);

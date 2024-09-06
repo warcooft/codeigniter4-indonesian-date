@@ -27,20 +27,20 @@ class User extends ShieldUserEntity
 
 # Usage
 ```php
-    /**
+ /**
    * Default parameters for indonesianDate
    * indonesianDate(string $attribute, bool $showDayOfWeek = true, bool $showTime = false)
    */
 
-  echo auth()->user()->indonesianDate('updated_at');
+  echo auth()->user()->indonesianDate('created_at');
   // Result: "Jum'at, 6 September 2024"
 
   // If you want to hide the day of the week, set the second parameter to false
-  echo auth()->user()->indonesianDate('updated_at', false);
+  echo auth()->user()->indonesianDate('created_at', false);
   // Result: "6 September 2024"
 
   // If you want to display the time, set the third parameter to true
-  echo auth()->user()->indonesianDate('updated_at', false, true);
+  echo auth()->user()->indonesianDate('created_at', false, true);
   // Result: "6 September 2024 18:00"
 
   // Get zodiac sign

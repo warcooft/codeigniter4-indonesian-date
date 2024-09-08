@@ -18,14 +18,14 @@ use Exception;
 
 trait IndonesianDateTraits
 {
-    public function indonesianDate(string $attribute, bool $showDayOfWeek = true, bool $showTime = false): string
+    public function indonesianDate(string $attribute, bool $showDayOfWeek = true, bool $showTime = false): string|null
     {
         $datetime = $this->attributes[$attribute];
 
         return static::output($datetime, $showDayOfWeek, $showTime);
     }
 
-    public function dayString(string $attribute): string
+    public function dayString(string $attribute): string|null
     {
         $datetime = $this->attributes[$attribute];
         $parse    = Time::parse($datetime);
@@ -34,7 +34,7 @@ trait IndonesianDateTraits
         return static::day($dayWeek);
     }
 
-    public function monthString(string $attribute): string
+    public function monthString(string $attribute): string|null
     {
         $datetime = $this->attributes[$attribute];
         $parse    = Time::parse($datetime);
@@ -43,9 +43,13 @@ trait IndonesianDateTraits
         return static::month($month);
     }
 
-    public function zodiac(string $attribute): string
+    public function zodiac(string $attribute): string|null
     {
         $datetime = $this->attributes[$attribute];
+
+        if (!$datetime) {
+            return $datetime;
+        }
         $parse    = Time::parse($datetime);
         $month    = (int) $parse->getMonth();
         $day      = (int) $parse->getDay();
@@ -56,6 +60,10 @@ trait IndonesianDateTraits
     public function age(string $attribute)
     {
         $datetime = $this->attributes[$attribute];
+
+        if (!$datetime) {
+            return $datetime;
+        }
         $parse    = Time::parse($datetime);
 
         return $parse->getAge();

@@ -20,7 +20,12 @@ trait IndonesianDateTraits
 {
     public function indonesianDate(string $attribute, bool $showDayOfWeek = true, bool $showTime = false): string|null
     {
-        $datetime = $this->attributes[$attribute];
+        $datetime = $this->attributes[(string) $attribute];
+
+        if ($datetime instanceof Time) {
+            // Langsung gunakan objek Time di method output
+            return static::output($datetime->toDateString(), $showDayOfWeek, $showTime);
+        }
 
         return static::output($datetime, $showDayOfWeek, $showTime);
     }
@@ -71,31 +76,36 @@ trait IndonesianDateTraits
 
     // Indonesian standard datetime output
     // E.g: Senin, 23 September 2024 18.00
-    private static function output($datetime, bool $showDayOfWeek = true, bool $showTime = false): string
+    private static function output(string $datetime, bool $showDayOfWeek = true, bool $showTime = false): string
     {
-        $parse    = Time::parse($datetime);
+        try {
+            // Coba parse langsung dari string datetime
+            $parse = new Time($datetime);
 
-        $year        = $parse->getYear();
-        $month       = $parse->getMonth();
-        $dayWeek     = $parse->getDayOfWeek();
-        $day         = $parse->getDay();
-        $hour        = $parse->getHour();
-        $minute      = str_pad($parse->getMinute(), 2, '0', STR_PAD_LEFT);
+            $year        = $parse->getYear();
+            $month       = $parse->getMonth();
+            $dayWeek     = $parse->getDayOfWeek();
+            $day         = $parse->getDay();
+            $hour        = $parse->getHour();
+            $minute      = str_pad($parse->getMinute(), 2, '0', STR_PAD_LEFT);
 
-        $dayString   = static::day($dayWeek);
-        $monthString = static::month($month);
+            $dayString   = static::day($dayWeek);
+            $monthString = static::month($month);
 
-        $output = "$dayString, $day $monthString $year";
+            $output = "$dayString, $day $monthString $year";
 
-        if (!$showDayOfWeek && !$showTime) {
-            $output = "$day $monthString $year";
-        } elseif (!$showDayOfWeek && $showTime) {
-            $output = "$day $monthString $year $hour.$minute";
-        } elseif ($showDayOfWeek && $showTime) {
-            $output .= " $hour.$minute";
+            if (!$showDayOfWeek && !$showTime) {
+                $output = "$day $monthString $year";
+            } elseif (!$showDayOfWeek && $showTime) {
+                $output = "$day $monthString $year $hour.$minute";
+            } elseif ($showDayOfWeek && $showTime) {
+                $output .= " $hour.$minute";
+            }
+
+            return $output;
+        } catch (Exception $e) {
+            throw $e;
         }
-
-        return $output;
     }
 
     private static function determineZodiac(int $day, int $month): string

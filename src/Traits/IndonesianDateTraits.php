@@ -33,7 +33,7 @@ trait IndonesianDateTraits
     public function dayString(string $attribute): string|null
     {
         $datetime = $this->attributes[$attribute];
-        $parse    = Time::parse($datetime);
+        $parse    = Time::parse((string)$datetime);
         $dayWeek  = (int) $parse->getDayOfWeek();
 
         return static::day($dayWeek);
